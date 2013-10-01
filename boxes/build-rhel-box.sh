@@ -36,7 +36,7 @@ BABUSHKA=${BABUSHKA:-0}
 
 # Path to files bundled with the box
 CWD=`readlink -f .`
-LXC_TEMPLATE=${CWD}/common/lxc-template
+LXC_TEMPLATE=${CWD}/common/lxc-template-rhel
 LXC_CONF=${CWD}/common/lxc.conf
 METATADA_JSON=${CWD}/common/metadata.json
 
@@ -56,7 +56,7 @@ if $(lxc-ls | grep -q "${RELEASE}-base"); then
   exit 1
 else
   export SUITE=$RELEASE
-  lxc-create -n ${RELEASE}-base -t rhel
+  lxc-create -n ${RELEASE}-base -t centos
 fi
 
 
@@ -79,8 +79,8 @@ mkdir -p ${ROOTFS}/home/vagrant/.ssh
 echo $VAGRANT_KEY > ${ROOTFS}/home/vagrant/.ssh/authorized_keys
 chroot ${ROOTFS} chown -R vagrant: /home/vagrant/.ssh
 
-chroot ${ROOTFS} yum install sudo -y --force-yes
-chroot ${ROOTFS} adduser vagrant sudo
+chroot ${ROOTFS} yum install sudo -y
+# chroot ${ROOTFS} adduser vagrant sudo
 
 # Enable passwordless sudo for users under the "sudo" group
 cp ${ROOTFS}/etc/sudoers{,.orig}
@@ -92,7 +92,7 @@ sed -i -e \
 ##################################################################################
 # 5 - Add some goodies and update packages
 
-PACKAGES=(vim curl wget man-db bash-completion ca-certificates)
+PACKAGES=(vim curl wget man-db bash-completion)
 chroot ${ROOTFS} yum install ${PACKAGES[*]} -y
 chroot ${ROOTFS} yum upgrade -y
 
@@ -121,7 +121,7 @@ fi
 # 7 - Free up some disk space
 
 rm -rf ${ROOTFS}/tmp/*
-chroot ${ROOTFS} yum clean
+chroot ${ROOTFS} yum clean metadata
 
 
 ##################################################################################
@@ -133,7 +133,7 @@ tar --numeric-owner -czf /tmp/vagrant-lxc-${RELEASE}/rootfs.tar.gz ./rootfs/*
 
 # Prepare package contents
 cd $WORKING_DIR
-cp $LXC_TEMPLATE .
+cp $LXC_TEMPLATE lxc-template
 cp $LXC_CONF .
 cp $METATADA_JSON .
 chmod +x lxc-template
