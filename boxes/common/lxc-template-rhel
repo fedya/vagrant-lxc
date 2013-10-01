@@ -29,7 +29,7 @@
 arch=$(arch)
 cache_base=/var/cache/lxc/centos/$arch
 default_path=/var/lib/lxc
-root_password=rooter
+# root_password=rooter
 lxc_network_type=veth
 lxc_network_link=lxcbr0
 
@@ -132,8 +132,8 @@ EOF
     mknod -m 600 ${dev_path}/initctl p
     mknod -m 666 ${dev_path}/ptmx c 5 2
 
-    echo "setting root passwd to $root_password"
-    echo "root:$root_password" | chroot $rootfs_path chpasswd
+    # echo "setting root passwd to $root_password"
+    # echo "root:$root_password" | chroot $rootfs_path chpasswd
 
     return 0
 }
@@ -489,5 +489,7 @@ if [ ! -z $clean ]; then
     clean || exit 1
     exit 0
 fi
-echo "container rootfs and config created, default root password is '$root_password'"
+
+# echo "container rootfs and config created, default root password is '$root_password'"
+echo "container rootfs and config created"
 echo "edit the config file to check/enable networking setup"

@@ -56,7 +56,7 @@ if $(lxc-ls | grep -q "${RELEASE}-base"); then
   exit 1
 else
   export SUITE=$RELEASE
-  lxc-create -n ${RELEASE}-base -t centos
+  lxc-create -n ${RELEASE}-base -t rhel -- --release ${RELEASE} --arch ${ARCH}
 fi
 
 
