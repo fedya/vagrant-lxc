@@ -1,31 +1,30 @@
 #!/bin/bash
 
-# This is a modified version of /usr/share/lxc/templates/lxc-openmandriva
-# that comes with Ubuntu 13.04 changed to suit vagrant-lxc needs
-
 #
 # template script for generating openmandriva container for LXC
 #
-# This script consolidates and extends the existing lxc openmandriva scripts
-#
 
-# Copyright © 2011 Serge Hallyn <serge.hallyn@canonical.com>
-# Copyright © 2010 Wilhelm Meier
-# Author: Wilhelm Meier <wilhelm.meier@fh-kl.de>
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License version 2, as
-# published by the Free Software Foundation.
+# lxc: linux Container library
 
-# This program is distributed in the hope that it will be useful,
+# Authors:
+# Alexander Khryukin <alexander@mezon.ru>
+# Vokhmin Alexey V   <avokhmin@gmail.com>
+
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 
 set -e
 
@@ -45,7 +44,7 @@ extract_rootfs()
     return 0
 }
 
-install_mdv()
+install_openmandriva()
 {
     rootfs=$1
     release=$2
@@ -125,28 +124,21 @@ if [ $? -ne 0 ]; then
 fi
 eval set -- "$options"
 
-release=turtle # Default to the last MDV release for non-MDV systems
-if [ -f /etc/lsb-release ]; then
-    . /etc/lsb-release
-    if [ "$DISTRIB_ID" = "MandrivaLinux" ]; then
-        release=$DISTRIB_CODENAME
+[ -f /etc/mandriva-release ] && is_openmandriva=true
+
+if [ -z "$release" ]; then
+    if [ "$distro" == "cooker" ]; then
+        release="$distro"
+    elif [ "$is_openmandriva" ]; then
+        # release=$(rpm --eval %product_version)
+        release=$(rpm --eval %disttag%distepoch)
+    else
+        echo "This is not an OpenMandriva or ROSA release"
+        exit 1
     fi
 fi
 
 arch=$(uname -m)
-
-
-# Map a few architectures to their generic Fedora repository archs.
-# The two ARM archs are a bit of a guesstimate for the v5 and v6
-# archs.  V6 should have hardware floating point (Rasberry Pi).
-# The "arm" arch is safer (no hardware floating point).  So
-# there may be cases where we "get it wrong" for some v6 other
-# than RPi.
-case "$arch" in
-i686) arch=i386 ;;
-armv3l|armv4l|armv5l) arch=arm ;;
-armv6l|armv7l|armv8l) arch=armhfp ;;
-esac
 
 debug=0
 trim_container=0
@@ -171,8 +163,8 @@ if [ $debug -eq 1 ]; then
     set -x
 fi
 
-if [ $hostarch = "i386" -a $arch = "amd64" ]; then
-    echo "can't create amd64 container on i386"
+if [ $hostarch = "i386" -a $arch = "x86_64" ]; then
+    echo "can't create x86_64 container on i386"
     exit 1
 fi
 
@@ -197,9 +189,9 @@ if [ -z "$rootfs" ]; then
     fi
 fi
 
-install_mdv $rootfs $release $tarball
+install_openmandriva $rootfs $release $tarball
 if [ $? -ne 0 ]; then
-    echo "failed to install ubuntu $release"
+    echo "failed to install openmandriva $release"
     exit 1
 fi
 

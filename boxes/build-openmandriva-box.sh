@@ -3,25 +3,25 @@
 # set -x
 set -e
 
-# Script used to build openmandriva base vagrant-lxc containers, currently limited to
+# Script used to build OpenMandriva base vagrant-lxc containers, currently limited to
 # host's arch
 #
 # USAGE:
-#   $ cd boxes && sudo ./build-openmandriva-box.sh RHEL_RELEASE
+#   $ cd boxes && sudo ./build-openmandriva-box.sh OPENMANDRIVA_RELEASE BOX_ARCH
 #
 # To enable Chef or any other configuration management tool pass '1' to the
 # corresponding env var:
-#   $ CHEF=1 sudo -E ./build-openmandriva-box.sh RHEL_RELEASE
-#   $ PUPPET=1 sudo -E ./build-openmandriva-box.sh RHEL_RELEASE
-#   $ SALT=1 sudo -E ./build-openmandriva-box.sh RHEL_RELEASE
-#   $ BABUSHKA=1 sudo -E ./build-openmandriva-box.sh RHEL_RELEASE
+#   $ CHEF=1 sudo -E ./build-openmandriva-box.sh OPENMANDRIVA_RELEASE BOX_ARCH
+#   $ PUPPET=1 sudo -E ./build-openmandriva-box.sh OPENMANDRIVA_RELEASE BOX_ARCH
+#   $ SALT=1 sudo -E ./build-openmandriva-box.sh OPENMANDRIVA_RELEASE BOX_ARCH
+#   $ BABUSHKA=1 sudo -E ./build-openmandriva-box.sh OPENMANDRIVA_RELEASE BOX_ARCH
 
 ##################################################################################
 # 0 - Initial setup and sanity checks
 
 TODAY=$(date -u +"%Y-%m-%d")
 NOW=$(date -u)
-RELEASE=${1:-"openmandriva"}
+RELEASE=${1:-"openmandriva2013.0"}
 ARCH=${2:-"x86_64"}
 PKG=vagrant-lxc-${RELEASE}-${ARCH}-${TODAY}.box
 WORKING_DIR=/tmp/vagrant-lxc-${RELEASE}
@@ -36,7 +36,7 @@ BABUSHKA=${BABUSHKA:-0}
 
 # Path to files bundled with the box
 CWD=`readlink -f .`
-LXC_TEMPLATE=${CWD}/common/lxc-template-mdv
+LXC_TEMPLATE=${CWD}/common/lxc-template-openmandriva
 LXC_CONF=${CWD}/common/lxc.conf
 METATADA_JSON=${CWD}/common/metadata.json
 
@@ -56,7 +56,7 @@ if $(lxc-ls | grep -q "${RELEASE}-base"); then
   exit 1
 else
   export SUITE=$RELEASE
-  lxc-create -n ${RELEASE}-base -t openmandriva
+  lxc-create -n ${RELEASE}-base -t openmandriva --release ${RELEASE} --arch ${ARCH}
 fi
 
 
