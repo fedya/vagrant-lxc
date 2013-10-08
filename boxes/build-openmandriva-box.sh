@@ -56,7 +56,7 @@ if $(lxc-ls | grep -q "${RELEASE}-base"); then
   exit 1
 else
   export SUITE=$RELEASE
-  lxc-create -n ${RELEASE}-base -t openmandriva -- --release ${RELEASE} --arch ${ARCH}
+  lxc-create -n ${RELEASE}-base -t openmandriva -- -R ${RELEASE} --arch ${ARCH}
 fi
 
 
