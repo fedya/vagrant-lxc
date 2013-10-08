@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This is a modified version of /usr/share/lxc/templates/lxc-openmandriva
+# that comes with OpenMandriva changed to suit vagrant-lxc needs
+
 #
 # template script for generating openmandriva container for LXC
 #
