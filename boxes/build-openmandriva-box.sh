@@ -80,7 +80,7 @@ mkdir -p ${ROOTFS}/home/vagrant/.ssh
 echo $VAGRANT_KEY > ${ROOTFS}/home/vagrant/.ssh/authorized_keys
 chroot ${ROOTFS} chown -R vagrant: /home/vagrant/.ssh
 
-chroot ${ROOTFS} urpmi sudo -y
+chroot ${ROOTFS} urpmi sudo --auto
 chroot ${ROOTFS} adduser vagrant sudo
 
 # Enable passwordless sudo for users under the "sudo" group
