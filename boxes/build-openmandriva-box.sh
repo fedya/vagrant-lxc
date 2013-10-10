@@ -63,6 +63,8 @@ fi
 ######################################
 # 2 - Fix some known issues
 
+# Fixes some networking issues
+sudo cat /etc/resolv.conf > ${ROOTFS}/etc/resolv.conf
 
 ##################################################################################
 # 3 - Prepare vagrant user
