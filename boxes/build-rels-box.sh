@@ -3,25 +3,25 @@
 # set -x
 set -e
 
-# Script used to build RHEL base vagrant-lxc containers, currently limited to
+# Script used to build RELS base vagrant-lxc containers, currently limited to
 # host's arch
 #
 # USAGE:
-#   $ cd boxes && sudo ./build-rhel-box.sh RHEL_RELEASE
+#   $ cd boxes && sudo ./build-rels-box.sh RELS_RELEASE BOX_ARCH
 #
 # To enable Chef or any other configuration management tool pass '1' to the
 # corresponding env var:
-#   $ CHEF=1 sudo -E ./build-rhel-box.sh RHEL_RELEASE
-#   $ PUPPET=1 sudo -E ./build-rhel-box.sh RHEL_RELEASE
-#   $ SALT=1 sudo -E ./build-rhel-box.sh RHEL_RELEASE
-#   $ BABUSHKA=1 sudo -E ./build-rhel-box.sh RHEL_RELEASE
+#   $ CHEF=1 sudo -E ./build-rels-box.sh RELS_RELEASE BOX_ARCH
+#   $ PUPPET=1 sudo -E ./build-rels-box.sh RELS_RELEASE BOX_ARCH
+#   $ SALT=1 sudo -E ./build-rels-box.sh RELS_RELEASE BOX_ARCH
+#   $ BABUSHKA=1 sudo -E ./build-rels-box.sh RELS_RELEASE BOX_ARCH
 
 ##################################################################################
 # 0 - Initial setup and sanity checks
 
 TODAY=$(date -u +"%Y-%m-%d")
 NOW=$(date -u)
-RELEASE=${1:-"rhel"}
+RELEASE=${1:-"rels"}
 ARCH=${2:-"x86_64"}
 PKG=vagrant-lxc-${RELEASE}-${ARCH}-${TODAY}.box
 WORKING_DIR=/tmp/vagrant-lxc-${RELEASE}
@@ -36,7 +36,7 @@ BABUSHKA=${BABUSHKA:-0}
 
 # Path to files bundled with the box
 CWD=`readlink -f .`
-LXC_TEMPLATE=${CWD}/common/lxc-template-rhel
+LXC_TEMPLATE=${CWD}/common/lxc-template-rels
 LXC_CONF=${CWD}/common/lxc.conf
 METATADA_JSON=${CWD}/common/metadata.json
 
@@ -56,13 +56,15 @@ if $(lxc-ls | grep -q "${RELEASE}-base"); then
   exit 1
 else
   export SUITE=$RELEASE
-  lxc-create -n ${RELEASE}-base -t rhel -- --release ${RELEASE} --arch ${ARCH}
+  lxc-create -n ${RELEASE}-base -t rels -- --release ${RELEASE} --arch ${ARCH}
 fi
 
 
 ######################################
 # 2 - Fix some known issues
 
+# Fixes some networking issues
+cat /etc/resolv.conf > ${ROOTFS}/etc/resolv.conf
 
 ##################################################################################
 # 3 - Prepare vagrant user
@@ -80,19 +82,20 @@ echo $VAGRANT_KEY > ${ROOTFS}/home/vagrant/.ssh/authorized_keys
 chroot ${ROOTFS} chown -R vagrant: /home/vagrant/.ssh
 
 chroot ${ROOTFS} yum install sudo -y
-# chroot ${ROOTFS} adduser vagrant sudo
+chroot ${ROOTFS} usermod -a -G wheel vagrant
 
 # Enable passwordless sudo for users under the "sudo" group
 cp ${ROOTFS}/etc/sudoers{,.orig}
-sed -i -e \
-      's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' \
-      ${ROOTFS}/etc/sudoers
+sed -i 's/\#%wheel/\%wheel/' ${ROOTFS}/etc/sudoers
+# sed -i -e \
+#       's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' \
+#       ${ROOTFS}/etc/sudoers
 
 
 ##################################################################################
 # 5 - Add some goodies and update packages
 
-PACKAGES=(vim curl wget man-db bash-completion)
+PACKAGES=(vim curl wget man bash-completion)
 chroot ${ROOTFS} yum install ${PACKAGES[*]} -y
 chroot ${ROOTFS} yum upgrade -y
 
