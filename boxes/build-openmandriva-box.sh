@@ -35,7 +35,7 @@ SALT=${SALT:-0}
 BABUSHKA=${BABUSHKA:-0}
 
 # Path to files bundled with the box
-CWD=`readlink -f .`
+CWD=`pwd`
 LXC_TEMPLATE=${CWD}/common/lxc-template-openmandriva
 LXC_CONF=${CWD}/common/lxc.conf
 METATADA_JSON=${CWD}/common/metadata.json
