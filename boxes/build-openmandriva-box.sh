@@ -68,7 +68,6 @@ cat /etc/resolv.conf > ${ROOTFS}/etc/resolv.conf
 
 ##################################################################################
 # 3 - Prepare vagrant user
-# sudo chroot ${ROOTFS} useradd --create-home -s /bin/bash vagrant
 chroot ${ROOTFS} su -c 'useradd --create-home -s /bin/bash vagrant'
 
 echo -n 'vagrant:vagrant' | chroot ${ROOTFS} chpasswd
