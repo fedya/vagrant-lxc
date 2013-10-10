@@ -125,7 +125,7 @@ fi
 # 7 - Free up some disk space
 
 rm -rf ${ROOTFS}/tmp/*
-chroot ${ROOTFS} yum clean metadata
+# chroot ${ROOTFS} urpmi clean metadata
 
 
 ##################################################################################
