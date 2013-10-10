@@ -83,13 +83,14 @@ echo $VAGRANT_KEY > ${ROOTFS}/home/vagrant/.ssh/authorized_keys
 chroot ${ROOTFS} chown -R vagrant: /home/vagrant/.ssh
 
 chroot ${ROOTFS} urpmi sudo --auto
-chroot ${ROOTFS} adduser vagrant sudo
+chroot ${ROOTFS} usermod -a -G wheel vagrant
 
 # Enable passwordless sudo for users under the "sudo" group
 cp ${ROOTFS}/etc/sudoers{,.orig}
-sed -i -e \
-      's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' \
-      ${ROOTFS}/etc/sudoers
+sed -i 's/\#%wheel/\%wheel/' /etc/sudoers
+# sed -i -e \
+#       's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' \
+#       ${ROOTFS}/etc/sudoers
 
 
 ##################################################################################
