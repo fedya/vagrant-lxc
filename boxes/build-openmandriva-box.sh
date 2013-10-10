@@ -96,7 +96,7 @@ sed -i 's/\#%wheel/\%wheel/' ${ROOTFS}/etc/sudoers
 ##################################################################################
 # 5 - Add some goodies and update packages
 
-PACKAGES=(vim curl wget man-db bash-completion)
+PACKAGES=(vim curl wget man bash-completion)
 chroot ${ROOTFS} urpmi ${PACKAGES[*]} --auto
 chroot ${ROOTFS} urpmi.update -a
 
