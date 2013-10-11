@@ -158,15 +158,8 @@ do
     esac
 done
 
-if [ -z "$release" ]; then
-    if [ "$is_rels" ]; then
-        # release=$(cat /etc/rosa-release |awk '/^ROSA/ {print $3}' |awk -F. '{print $1}')
-        release='6.4'
-    else
-        echo "This is not a rels host and release missing, defaulting to 6. use -R|--release to specify release"
-        release='6.4'
-    fi
-fi
+# doesn't use
+release=${release:-"6.4"}
 
 hostarch=$(uname -m)
 arch=${arch:-$hostarch}

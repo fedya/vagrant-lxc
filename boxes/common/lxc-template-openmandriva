@@ -150,18 +150,8 @@ if [ $? -ne 0 ]; then
 fi
 eval set -- "$options"
 
+# doesn't use
 release=${release:-"cooker"} 
-if [ -f /etc/lsb-release ]; then
-    . /etc/lsb-release
-    if [ "$DISTRIB_ID" = "OpenMandrivaLinux" ]; then
-        release=openmandriva2013.0
-    elif [ "$DISTRIB_ID" = "RosaDesktop.Fresh" ]; then
-        release=rosa2012.1
-    else
-        echo "This is not an OpenMandriva or ROSA release"
-        exit 1
-    fi
-fi
 
 hostarch=$(uname -m)
 while true
