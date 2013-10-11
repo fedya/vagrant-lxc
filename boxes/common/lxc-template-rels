@@ -116,21 +116,26 @@ usage()
     cat <<EOF
 usage:
     $1 -n|--name=<container_name>
-        [-p|--path=<path>] [-c|--clean] [-R|--release=<CentOS_release>] [-A|--arch=<arch of the container>]
+        [-p|--path=<path>]
+        [-c|--clean]
+        [-R|--release=<RELS_release>]
+        [-A|--arch=<arch of the container>]
+        [-T|--tarball <tarball path>]
+        [-S|--auth-key <auth-key path>]
         [-h|--help]
 Mandatory args:
   -n,--name         container name, used to as an identifier for that container from now on
 Optional args:
   -p,--path         path to where the container rootfs will be created, defaults to /var/lib/lxc. The container config will go under /var/lib/lxc in that case
   -c,--clean        clean the cache
-  -R,--release      Centos release for the new container. if the host is Centos, then it will defaultto the host's release.
+  -R,--release      RELS release for the new container. if the host is RELS, then it will defaultto the host's release.
   -A,--arch         NOT USED YET. Define what arch the container will be [i686,x86_64]
   -h,--help         print this help
 EOF
     return 0
 }
 
-options=$(getopt -o hp:n:cR: -l help,path:,name:,clean,release: -- "$@")
+options=$(getopt -o hp:n:cR:S:T: -l help,path:,name:,clean,release:,auth-key:,tarball: -- "$@")
 if [ $? -ne 0 ]; then
     usage $(basename $0)
     exit 1
@@ -145,6 +150,8 @@ do
     -n|--name)      name=$2; shift 2;;
     -c|--clean)     clean=$2; shift 2;;
     -R|--release)   release=$2; shift 2;;
+    -T|--tarball)   tarball=$2; shift 2;;
+    -S|--auth-key)  auth_key=$2; shift 2;;
     -A|--arch)      arch=$2; shift 2;;
     --)             shift 1; break ;;
     *)              break ;;

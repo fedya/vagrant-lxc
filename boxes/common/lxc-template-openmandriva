@@ -121,6 +121,8 @@ usage:
         [-g|--gw=<gw address>] [-d|--dns=<dns address>]
         [-P|--profile=<name of the profile>] [--rootfs=<path>]
         [-A|--arch=<arch of the container>]
+        [-T|--tarball <tarball path>]
+        [-S|--auth-key <auth-key path>]
         [-h|--help]
 Mandatory args:
   -n,--name         container name, used to as an identifier for that container from now on
@@ -141,7 +143,7 @@ EOF
     return 0
 }
 
-options=$(getopt -o hp:n:P:cR:4:6:g:d:A -l help,rootfs:,path:,name:,profile:,clean:,release:,ipv4:,ipv6:,gw:,dns:,arch: -- "$@")
+options=$(getopt -o hp:n:P:cR:4:6:g:d:A:S:T: -l help,rootfs:,path:,name:,profile:,clean:,release:,ipv4:,ipv6:,gw:,dns:,arch:,auth-key:,tarball: -- "$@")
 if [ $? -ne 0 ]; then
     usage $(basename $0)
     exit 1
@@ -172,7 +174,9 @@ do
         -P|--profile)   profile=$2; shift 2;;
         -c|--clean)     clean=$2; shift 2;;
         -R|--release)   release=$2; shift 2;;
-        -a|--arch)      arch=$2; shift 2;;
+        -T|--tarball)   tarball=$2; shift 2;;
+        -S|--auth-key)  auth_key=$2; shift 2;;
+        -A|--arch)      arch=$2; shift 2;;
         -4|--ipv4)      ipv4=$2; shift 2;;
         -6|--ipv6)      ipv6=$2; shift 2;;
         -g|--gw)        gw=$2; shift 2;;
