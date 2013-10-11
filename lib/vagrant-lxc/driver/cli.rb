@@ -81,7 +81,14 @@ module Vagrant
           if cmd.last.is_a?(Hash)
             opts       = cmd.pop
             namespaces = Array(opts[:namespaces]).map(&:upcase).join('|')
-            extra      = ['--namespaces', namespaces] if namespaces
+
+            if namespaces
+              if supports_attach_with_namespaces?
+                extra = ['--namespaces', namespaces]
+              else
+                raise LXC::Errors::NamespacesNotSupported
+              end
+            end
           end
 
           run :attach, '--name', @name, *((extra || []) + cmd)
@@ -108,6 +115,14 @@ module Vagrant
 
         def run(command, *args)
           @sudo_wrapper.run("lxc-#{command}", *args)
+        end
+
+        def supports_attach_with_namespaces?
+          unless defined?(@supports_attach_with_namespaces)
+            @supports_attach_with_namespaces = run(:attach, '-h', '2>&1').include?('--namespaces')
+          end
+
+          return @supports_attach_with_namespaces
         end
       end
     end
