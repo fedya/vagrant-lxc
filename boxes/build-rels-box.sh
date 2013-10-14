@@ -96,7 +96,7 @@ sed -i 's/\# %wheel/\%wheel/' ${ROOTFS}/etc/sudoers
 ##################################################################################
 # 5 - Add some goodies and update packages
 
-PACKAGES=(vim curl wget man bash-completion openssh-server openssh-clients)
+PACKAGES=(vim curl wget man bash-completion openssh-server openssh-clients tar)
 chroot ${ROOTFS} yum install ${PACKAGES[*]} -y
 chroot ${ROOTFS} yum upgrade -y
 chroot ${ROOTFS} chkconfig sshd on
