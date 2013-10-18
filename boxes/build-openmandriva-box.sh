@@ -87,6 +87,7 @@ chroot ${ROOTFS} usermod -a -G wheel vagrant
 
 # Enable passwordless sudo for users under the "sudo" group
 cp ${ROOTFS}/etc/sudoers{,.orig}
+sed -i 's/Defaults    requiretty/\# Defaults requiretty/' ${ROOTFS}/etc/sudoers
 sed -i 's/\#%wheel/\%wheel/' ${ROOTFS}/etc/sudoers
 # sed -i -e \
 #       's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' \
@@ -96,7 +97,7 @@ sed -i 's/\#%wheel/\%wheel/' ${ROOTFS}/etc/sudoers
 ##################################################################################
 # 5 - Add some goodies and update packages
 
-PACKAGES=(vim curl wget man bash-completion)
+PACKAGES=(vim curl wget man bash-completion openssh-server openssh-clients tar)
 chroot ${ROOTFS} urpmi ${PACKAGES[*]} --auto
 chroot ${ROOTFS} urpmi.update -a
 
