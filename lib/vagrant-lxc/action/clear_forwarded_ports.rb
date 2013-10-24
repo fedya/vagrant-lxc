@@ -16,7 +16,7 @@ module Vagrant
               next unless is_redir_pid?(pid)
               @logger.debug "Killing pid #{pid}"
               system "pkill -TERM -P #{pid}"
-              Process.detach pid # Fix: zombie process
+              Process.wait pid rescue nil # Fix: zombie process
             end
 
             @logger.info "Removing redir pids files"
