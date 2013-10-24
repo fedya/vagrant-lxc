@@ -9,6 +9,7 @@ set -e
 # USAGE:
 #   $ cd boxes && sudo ./build-openmandriva-box.sh OPENMANDRIVA_RELEASE BOX_ARCH
 #
+# TODO: scripts for install CHEF, PUPPET, SALT, BABUSHKA
 # To enable Chef or any other configuration management tool pass '1' to the
 # corresponding env var:
 #   $ CHEF=1 sudo -E ./build-openmandriva-box.sh OPENMANDRIVA_RELEASE BOX_ARCH
