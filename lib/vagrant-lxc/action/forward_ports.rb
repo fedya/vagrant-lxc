@@ -78,7 +78,9 @@ module Vagrant
           redir_cmd = "redir #{params.join(' ')} 2>/dev/null"
 
           @logger.debug "Forwarding port with `#{redir_cmd}`"
-          spawn redir_cmd
+          pid = spawn redir_cmd
+          Process.detach pid # Fix: zombie process
+          pid
         end
 
         def store_redir_pid(host_port, redir_pid)
