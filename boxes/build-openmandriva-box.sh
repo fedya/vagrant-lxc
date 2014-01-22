@@ -83,7 +83,7 @@ mkdir -p ${ROOTFS}/home/vagrant/.ssh
 echo $VAGRANT_KEY > ${ROOTFS}/home/vagrant/.ssh/authorized_keys
 chroot ${ROOTFS} chown -R vagrant: /home/vagrant/.ssh
 
-chroot ${ROOTFS} urpmi sudo --auto
+chroot ${ROOTFS} urpmi sudo --auto --ignorearch
 chroot ${ROOTFS} usermod -a -G wheel vagrant
 
 # Enable passwordless sudo for users under the "sudo" group
@@ -100,7 +100,7 @@ sed -i 's/\# %wheel/\%wheel/' ${ROOTFS}/etc/sudoers
 # 5 - Add some goodies and update packages
 
 PACKAGES=(vim curl wget man bash-completion openssh-server openssh-clients tar)
-chroot ${ROOTFS} urpmi ${PACKAGES[*]} --auto
+chroot ${ROOTFS} urpmi ${PACKAGES[*]} --auto --ignorearch
 chroot ${ROOTFS} urpmi.update -a
 
 
